@@ -1,0 +1,184 @@
+<div class="tool-card">
+  <!--Blue Header-->
+  <div class="card-header">
+    <h2>IP &amp; Location Finder</h2>
+    <p>Check your IP address and location details</p>
+  </div>
+
+  <div class="card-body">
+    <!--Input Section-->
+    <div class="input-group">
+      <label>Enter IP Address (Optional)</label>
+      <input id="ip-input" placeholder="e.g., 8.8.8.8 (Leave empty for your IP)" type="text" />
+    </div>
+
+    <!--Action Button-->
+    <button class="calc-btn" onclick="getIPData()">Find Location Details</button>
+
+    <!--Results Box-->
+    <div class="result-box" id="result-box">
+      <div class="res-title">Your Location Details</div>
+      
+      <div class="res-details">
+        <p><strong>IP Address:</strong> <span id="res-ip">Loading...</span></p>
+        <p><strong>City / Region:</strong> <span id="res-city">Loading...</span></p>
+        <p><strong>Country:</strong> <span id="res-country">Loading...</span></p>
+        <p><strong>ISP / Provider:</strong> <span id="res-isp">Loading...</span></p>
+        <p><strong>Timezone:</strong> <span id="res-tz">Loading...</span></p>
+      </div>
+    </div>
+
+    <!--Map Container-->
+    <div class="map-container">
+      <iframe frameborder="0" height="200" id="google-map" loading="lazy" style="border: 0;" width="100%"></iframe>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Layout Matching Image Design */
+  .tool-card {
+    max-width: 420px;
+    margin: 20px auto;
+    background: #ffffff;
+    border: 2px solid #1565c0;
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    background: #1565c0;
+    color: #ffffff;
+    padding: 20px 15px;
+    text-align: center;
+  }
+
+  .card-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  .card-header p {
+    margin: 6px 0 0 0;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-group label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #1565c0;
+    margin-bottom: 6px;
+  }
+
+  .input-group input {
+    padding: 10px 12px;
+    border: 1.5px solid #b3e5fc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    color: #0d47a1;
+  }
+
+  .input-group input:focus {
+    border-color: #1565c0;
+  }
+
+  .calc-btn {
+    width: 100%;
+    background: #1565c0;
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-bottom: 15px;
+  }
+
+  .calc-btn:hover {
+    background: #0d47a1;
+  }
+
+  .result-box {
+    background: #e1f5fe;
+    border: 1.5px solid #b3e5fc;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .res-title {
+    font-size: 13px;
+    color: #0288d1;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .res-details p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #0d47a1;
+    text-align: left;
+  }
+
+  .map-container {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #b3e5fc;
+  }
+</style>
+
+<script>
+  async function getIPData() {
+    const inputIp = document.getElementById('ip-input').value.trim();
+    const endpoint = inputIp ? `https://ipapi.co/${inputIp}/json/` : 'https://ipapi.co/json/';
+
+    try {
+      let response = await fetch(endpoint);
+      let data = await response.json();
+
+      if(!data.ip || data.error) {
+        response = await fetch(`https://ipinfo.io/${inputIp || ''}/json`);
+        data = await response.json();
+        
+        const loc = (data.loc || "0,0").split(',');
+        data.latitude = loc[0];
+        data.longitude = loc[1];
+        data.country_name = data.country;
+        data.org = data.org;
+      }
+
+      document.getElementById('res-ip').innerText = data.ip || 'N/A';
+      document.getElementById('res-city').innerText = `${data.city || ''}, ${data.region || ''}`;
+      document.getElementById('res-country').innerText = data.country_name || data.country || 'N/A';
+      document.getElementById('res-isp').innerText = data.org || 'N/A';
+      document.getElementById('res-tz').innerText = data.timezone || 'N/A';
+
+      if(data.latitude && data.longitude) {
+        document.getElementById('google-map').src = `https://maps.google.com/maps?q=${data.latitude},${data.longitude}&z=12&output=embed`;
+      }
+    } catch (err) {
+      alert('Unable to load IP data.');
+    }
+  }
+
+  // Load automatically on page visit
+  getIPData();
+</script>
