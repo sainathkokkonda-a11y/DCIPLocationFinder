@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP & Location Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="tool-card">
+  <!--Blue Header-->
+  <div class="card-header">
+    <h2>IP &amp; Location Finder</h2>
+    <p>Check your IP address and location details</p>
+  </div>
+
+  <div class="card-body">
+    <!--Input Section-->
+    <div class="input-group">
+      <label>Enter IP Address (Optional)</label>
+      <input id="ip-input" placeholder="e.g., 8.8.8.8 (Leave empty for your IP)" type="text" />
+    </div>
+
+    <!--Action Button-->
+    <button class="calc-btn" onclick="getIPData()">Find Location Details</button>
+
+    <!--Results Box-->
+    <div class="result-box" id="result-box">
+      <div class="res-title">Your Location Details</div>
+      
+      <div class="res-details">
+        <p><strong>IP Address:</strong> <span id="res-ip">Loading...</span></p>
+        <p><strong>City / Region:</strong> <span id="res-city">Loading...</span></p>
+        <p><strong>Country:</strong> <span id="res-country">Loading...</span></p>
+        <p><strong>ISP / Provider:</strong> <span id="res-isp">Loading...</span></p>
+        <p><strong>Timezone:</strong> <span id="res-tz">Loading...</span></p>
+      </div>
+    </div>
+
+    <!--Map Container-->
+    <div class="map-container">
+      <iframe frameborder="0" height="200" id="google-map" loading="lazy" style="border: 0;" width="100%"></iframe>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
